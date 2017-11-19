@@ -1,4 +1,4 @@
-module Control.Monad.State where
+module State where
 
 import Control.Monad
 import Control.Applicative
