@@ -41,4 +41,11 @@ put s = StateT . const $ return (s,())
 update :: (MArray a e m, Ix i) => i -> e -> StateT m (a i e) ()
 update i e = StateT $ \arr -> writeArray arr i e >> return (arr,())
 
-test = fmap snd (runStateT (lift (newArray (0,10) 0) >>= put >> update 0 5 >> get >>= liftF (freeze :: IOArray Int Int -> IO (Array Int Int))) (undefined :: IOArray Int Int))
+test = fmap snd $ runStateT
+    (do 
+        x <- lift (newArray (0,10) 0) 
+        put x 
+        update 0 5 
+        x <- get
+        liftF (freeze :: IOArray Int Int -> IO (Array Int Int)) x)
+    (undefined :: IOArray Int Int)
