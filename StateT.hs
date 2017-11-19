@@ -49,3 +49,19 @@ test = fmap snd $ runStateT
         x <- get
         liftF (freeze :: IOArray Int Int -> IO (Array Int Int)) x)
     (undefined :: IOArray Int Int)
+
+main = do 
+    arr <- fmap snd . (`runStateT` undefined) $ do
+        x <- lift (newIOArrayII (0,10) 0)
+        put x
+        mapM_ (uncurry update.(\x->(x,x))) [0..10]
+        lift $ freezeA x
+    mapM_ print arr
+    print "hej"
+
+
+newIOArrayII :: (Int, Int) -> Int -> IO (IOArray Int Int)
+newIOArrayII = newArray
+
+freezeA :: (Ix i, MArray a e m) => a i e -> m (Array i e)
+freezeA = freeze
